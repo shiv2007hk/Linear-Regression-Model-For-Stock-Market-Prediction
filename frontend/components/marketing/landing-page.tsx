@@ -1,6 +1,7 @@
 "use client";
 
 import { LandingNav } from "@/components/marketing/landing-nav";
+import { ScrollProgress } from "@/components/marketing/tilt";
 import { Hero } from "@/components/marketing/hero";
 import { TickerTape } from "@/components/marketing/ticker-tape";
 import { StatBand } from "@/components/marketing/stat-band";
@@ -15,6 +16,7 @@ import { SiteFooter } from "@/components/marketing/site-footer";
 export function LandingPage() {
   return (
     <div className="cinema min-h-dvh">
+      <ScrollProgress />
       <LandingNav />
       <main id="main-content">
         <Hero />

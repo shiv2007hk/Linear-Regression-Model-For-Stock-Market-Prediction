@@ -60,6 +60,42 @@ const ICONS: Record<string, typeof LayoutDashboard> = {
   BookOpen,
 };
 
+function SidebarSession() {
+  const { session, ready, name, signOut } = useSession();
+  const { pushToast } = useToast();
+  if (!ready || !session) return null;
+
+  const handleSignOut = () => {
+    signOut();
+    pushToast({
+      title: "Signed out",
+      description: "The demo profile was cleared from this browser.",
+      tone: "info",
+    });
+  };
+
+  return (
+    <div className="mb-2 flex items-center gap-2 rounded-xl border border-border bg-surface/60 p-2">
+      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-accent/12 font-mono text-[9.5px] font-semibold text-accent">
+        {initials(name ?? "")}
+      </span>
+      <div className="min-w-0 flex-1">
+        <p className="truncate text-[11px] font-medium text-ink">{name}</p>
+        <p className="truncate text-[9px] text-faint">Demo session · this browser</p>
+      </div>
+      <button
+        type="button"
+        onClick={handleSignOut}
+        aria-label="Sign out"
+        title="Sign out"
+        className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-faint transition-colors hover:bg-surface-3 hover:text-negative"
+      >
+        <LogOut size={13} />
+      </button>
+    </div>
+  );
+}
+
 function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname();
   const { data } = useApi<{ status: string; yfinance_version: string; database: string }>("/api/health");
@@ -96,6 +132,8 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
           </div>
         ))}
       </nav>
+
+      <SidebarSession />
 
       <div className="mt-auto rounded-xl border border-border bg-surface/60 p-3">
         <div className="flex items-center justify-between">

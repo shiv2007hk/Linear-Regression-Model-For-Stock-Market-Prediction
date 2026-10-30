@@ -41,7 +41,7 @@ export function StatBand() {
     <section aria-label="Platform capability at a glance" className="relative border-y border-border/70 bg-white/[0.012]">
       <div className="mx-auto grid w-full max-w-[1280px] grid-cols-1 gap-px bg-border/50 px-5 sm:grid-cols-2 sm:px-0 lg:grid-cols-4">
         {STATS.map((stat) => (
-          <div key={stat.label} className="bg-[#05080e] px-5 py-7 sm:px-6 lg:px-7 lg:py-9">
+          <div key={stat.label} className="stat-cell bg-[#05080e] px-5 py-7 sm:px-6 lg:px-7 lg:py-9">
             <p className="font-display text-[clamp(2.4rem,4vw,3.35rem)] font-semibold leading-none tracking-[-0.04em] text-ink">
               <Counter value={stat.value} />
             </p>

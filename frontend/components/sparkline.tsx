@@ -39,7 +39,16 @@ export function Sparkline({
         </linearGradient>
       </defs>
       <path d={area} fill={`url(#spark-${id})`} />
-      <polyline points={points.join(" ")} fill="none" stroke={color} strokeWidth={strokeWidth} strokeLinejoin="round" strokeLinecap="round" />
+      <polyline
+        className="spark-draw"
+        points={points.join(" ")}
+        pathLength={1}
+        fill="none"
+        stroke={color}
+        strokeWidth={strokeWidth}
+        strokeLinejoin="round"
+        strokeLinecap="round"
+      />
     </svg>
   );
 }

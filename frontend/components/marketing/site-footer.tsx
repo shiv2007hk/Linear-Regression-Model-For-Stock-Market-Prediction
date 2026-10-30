@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowUp, ArrowUpRight } from "lucide-react";
 import { BrandMark, Wordmark } from "@/components/brand";
+import { FooterAccountLink } from "@/components/marketing/footer-account";
 
 const PLATFORM = [
   { href: "/dashboard", label: "Dashboard" },
@@ -23,8 +24,6 @@ const MODEL = [
 const WORKSPACE = [
   { href: "/watchlist", label: "Watchlist & Portfolio" },
   { href: "/prediction-journal", label: "Prediction Journal" },
-  { href: "/login", label: "Sign in" },
-  { href: "/login?mode=signup", label: "Create a demo session" },
 ];
 
 export function SiteFooter() {
@@ -104,6 +103,17 @@ export function SiteFooter() {
                   </Link>
                 </li>
               ))}
+              <li>
+                <FooterAccountLink />
+              </li>
+              <li>
+                <Link
+                  href="/login?mode=signup"
+                  className="text-[11.5px] text-[var(--muted)] transition-colors hover:text-ink"
+                >
+                  Create a demo session
+                </Link>
+              </li>
             </ul>
             <p className="mt-5 font-mono text-[9px] uppercase leading-relaxed tracking-[0.12em] text-[var(--faint)]">
               Python · scikit-learn

@@ -7,6 +7,7 @@ import { ArrowDown, ArrowUpRight, CircleDollarSign, LineChart, ShieldCheck } fro
 import { Sparkline } from "@/components/sparkline";
 import { useFeatured } from "@/components/marketing/use-featured";
 import { useReducedMotion } from "@/components/marketing/motion";
+import { ParticleField } from "@/components/marketing/tilt";
 import { formatDate, formatPct, formatPrice } from "@/lib/format";
 import { cn } from "@/components/ui/cn";
 import type { FeaturedQuote } from "@/lib/types";
@@ -49,21 +50,33 @@ export function Hero() {
   const reduced = useReducedMotion();
   const reliance = quotes.find((quote) => quote.ticker === "RELIANCE.NS") ?? quotes[0];
   const apple = quotes.find((quote) => quote.ticker === "AAPL") ?? quotes[8];
+  const stage = useRef<HTMLDivElement>(null);
   const chipA = useRef<HTMLDivElement>(null);
   const chipB = useRef<HTMLDivElement>(null);
+  const chipC = useRef<HTMLDivElement>(null);
 
   const onMove = (event: React.PointerEvent<HTMLDivElement>) => {
     if (reduced || event.pointerType === "touch") return;
     const rect = event.currentTarget.getBoundingClientRect();
     const x = (event.clientX - rect.left) / rect.width - 0.5;
     const y = (event.clientY - rect.top) / rect.height - 0.5;
-    if (chipA.current) chipA.current.style.transform = `translate3d(${x * 14}px, ${y * 10}px, 0)`;
-    if (chipB.current) chipB.current.style.transform = `translate3d(${x * -9}px, ${y * -7}px, 0)`;
+    if (stage.current) {
+      stage.current.style.setProperty("--hy", `${x * 5}deg`);
+      stage.current.style.setProperty("--hx", `${-y * 4}deg`);
+    }
+    if (chipA.current) chipA.current.style.transform = `translate3d(${x * 14}px, ${y * 10}px, 44px)`;
+    if (chipB.current) chipB.current.style.transform = `translate3d(${x * -9}px, ${y * -7}px, 26px)`;
+    if (chipC.current) chipC.current.style.transform = `translate3d(${x * -6}px, ${y * -5}px, 20px)`;
   };
 
   const reset = () => {
-    if (chipA.current) chipA.current.style.transform = "translate3d(0,0,0)";
-    if (chipB.current) chipB.current.style.transform = "translate3d(0,0,0)";
+    if (stage.current) {
+      stage.current.style.setProperty("--hy", "0deg");
+      stage.current.style.setProperty("--hx", "0deg");
+    }
+    if (chipA.current) chipA.current.style.transform = "translate3d(0,0,44px)";
+    if (chipB.current) chipB.current.style.transform = "translate3d(0,0,26px)";
+    if (chipC.current) chipC.current.style.transform = "translate3d(0,0,20px)";
   };
 
   return (
@@ -71,19 +84,19 @@ export function Hero() {
       <div className="pointer-events-none absolute inset-x-0 top-0 h-[680px] grid-lines opacity-70" aria-hidden="true" />
       <div className="relative mx-auto grid w-full max-w-[1280px] items-center gap-10 px-5 sm:px-7 lg:grid-cols-[1.02fr_0.98fr] lg:gap-4">
         <div className="max-w-[600px]">
-          <h1 className="text-balance font-display text-[clamp(2.7rem,5.1vw,4.55rem)] font-semibold leading-[0.99] tracking-[-0.038em] text-ink">
+          <h1 className="hero-enter text-balance font-display text-[clamp(2.7rem,5.1vw,4.55rem)] font-semibold leading-[0.99] tracking-[-0.038em] text-ink">
             See Beyond the Numbers.
             <span className="mt-1 block text-[#c3cfe6]">Understand the Market.</span>
           </h1>
-          <p className="mt-6 max-w-[50ch] text-pretty text-[15px] leading-relaxed text-muted sm:text-[16px]">
+          <p className="hero-enter mt-6 max-w-[50ch] text-pretty text-[15px] leading-relaxed text-muted sm:text-[16px]" style={{ animationDelay: "90ms" }}>
             Explore stock market trends, analyze financial performance, and generate data-driven price forecasts with a
             model you can inspect line by line — Simple Linear Regression, trained on live Yahoo Finance history.
           </p>
 
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
+          <div className="hero-enter mt-8 flex flex-col gap-3 sm:flex-row sm:items-center" style={{ animationDelay: "160ms" }}>
             <Link
               href="/dashboard"
-              className="group inline-flex h-11 items-center justify-center gap-2 rounded-full bg-accent px-5 text-[13.5px] font-semibold text-accent-ink shadow-[0_16px_40px_-18px_var(--accent)] transition-all hover:brightness-110"
+              className="btn-sheen group inline-flex h-11 items-center justify-center gap-2 rounded-full bg-accent px-5 text-[13.5px] font-semibold text-accent-ink shadow-[0_16px_40px_-18px_var(--accent)] transition-all hover:brightness-110"
             >
               Explore Dashboard
               <ArrowUpRight size={15} className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
@@ -97,7 +110,7 @@ export function Hero() {
             </a>
           </div>
 
-          <ul className="mt-8 flex flex-wrap items-center gap-x-4 gap-y-2 text-[10.5px] text-faint">
+          <ul className="hero-enter mt-8 flex flex-wrap items-center gap-x-4 gap-y-2 text-[10.5px] text-faint" style={{ animationDelay: "230ms" }}>
             <li className="inline-flex items-center gap-1.5">
               <span className="relative flex h-1.5 w-1.5">
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-60" />
@@ -119,9 +132,14 @@ export function Hero() {
         <div
           onPointerMove={onMove}
           onPointerLeave={reset}
-          className="plinth-stage relative mx-auto w-full max-w-[620px]"
+          className="plinth-stage hero-enter relative mx-auto w-full max-w-[620px]"
+          style={{ animationDelay: "120ms" }}
         >
-          <div className="relative aspect-[5/4] w-full sm:aspect-[4/3]">
+          <div ref={stage} className="hero-tilt relative aspect-[5/4] w-full sm:aspect-[4/3]">
+            <span className="hero-orbit" aria-hidden="true" />
+            <span className="hero-orbit hero-orbit-2" aria-hidden="true" />
+            <ParticleField count={6} />
+
             <Image
               src="/brand/hero-plinth.png"
               alt="Chrome cube embossed with currency symbols, a stack of silver coins, and a gold growth arrow on dark lit pedestals."
@@ -153,7 +171,11 @@ export function Hero() {
             </div>
 
             {reliance ? (
-              <div ref={chipA} className="absolute left-0 top-[16%] z-20 transition-transform duration-300 ease-out sm:left-[-2%]">
+              <div
+                ref={chipA}
+                className="absolute left-0 top-[16%] z-20 transition-transform duration-300 ease-out sm:left-[-2%]"
+                style={{ transform: "translate3d(0,0,44px)" }}
+              >
                 <LiveChip quote={reliance} drift="drift-slow" />
               </div>
             ) : null}
@@ -161,10 +183,25 @@ export function Hero() {
               <div
                 ref={chipB}
                 className="absolute bottom-[7%] left-[8%] z-20 transition-transform duration-300 ease-out sm:left-[6%]"
+                style={{ transform: "translate3d(0,0,26px)" }}
               >
                 <LiveChip quote={apple} drift="drift-slower" />
               </div>
             ) : null}
+
+            <div
+              ref={chipC}
+              className="absolute bottom-[20%] right-[1%] z-20 hidden transition-transform duration-300 ease-out sm:block"
+              style={{ transform: "translate3d(0,0,20px)" }}
+            >
+              <div className="plinth-chip drift-slow w-[172px] rounded-2xl p-3">
+                <p className="font-mono text-[8.5px] uppercase tracking-[0.14em] text-[var(--faint)]">One-feature model</p>
+                <p className="mt-1.5 font-mono text-[12.5px] text-[var(--chrome)]">
+                  Y = b<sub>0</sub> + b<sub>1</sub>X
+                </p>
+                <p className="mt-1 text-[9px] leading-snug text-[var(--muted)]">previous close → current close</p>
+              </div>
+            </div>
 
             <div className="absolute bottom-3 right-4 z-20 flex items-center gap-1.5 font-mono text-[8.5px] uppercase tracking-[0.14em] text-[var(--faint)]">
               <CircleDollarSign size={10} />

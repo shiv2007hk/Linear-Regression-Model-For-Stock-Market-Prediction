@@ -529,3 +529,368 @@ html.light body {
     scroll-behavior: auto !important;
   }
 }
+
+/* ───────────────────────── 3D depth & motion layer ─────────────────────────
+   Pointer-driven perspective, layered light and short travel animations that
+   leave layout, data and copy untouched. */
+
+.scroll-progress {
+  position: fixed;
+  inset: 0 0 auto 0;
+  height: 2px;
+  z-index: 60;
+  pointer-events: none;
+}
+.scroll-progress > span {
+  display: block;
+  height: 100%;
+  transform-origin: 0 50%;
+  transform: scaleX(var(--progress, 0));
+  background: linear-gradient(90deg, var(--accent), var(--glacier) 55%, var(--gold));
+  opacity: 0.9;
+  transition: transform 90ms linear;
+}
+
+.tilt-card {
+  position: relative;
+  perspective: 1000px;
+  transform-style: preserve-3d;
+}
+.tilt-card-inner {
+  height: 100%;
+  border-radius: inherit;
+  transform: rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg));
+  transform-style: preserve-3d;
+  transition: transform 190ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.tilt-card:hover .tilt-card-inner {
+  transition-duration: 90ms;
+}
+.tilt-glare {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  border-radius: inherit;
+  pointer-events: none;
+  background: radial-gradient(
+    240px circle at var(--glare-x, 50%) var(--glare-y, 50%),
+    rgba(219, 229, 247, 0.13),
+    transparent 64%
+  );
+  opacity: 0;
+  transition: opacity 220ms ease;
+}
+.tilt-card:hover .tilt-glare,
+.tilt-card:focus-within .tilt-glare {
+  opacity: 1;
+}
+
+.hero-tilt {
+  transform: rotateX(var(--hx, 0deg)) rotateY(var(--hy, 0deg));
+  transform-style: preserve-3d;
+  transition: transform 220ms cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+}
+
+.hero-enter {
+  animation: heroEnter 900ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.hero-orbit {
+  position: absolute;
+  inset: 7% 6%;
+  z-index: 0;
+  border-radius: 50%;
+  border: 1px solid rgba(174, 188, 255, 0.16);
+  pointer-events: none;
+  mask-image: conic-gradient(from 210deg, transparent 0deg, #000 55deg, #000 150deg, transparent 215deg);
+  -webkit-mask-image: conic-gradient(from 210deg, transparent 0deg, #000 55deg, #000 150deg, transparent 215deg);
+  animation: orbitSpin 42s linear infinite;
+}
+.hero-orbit::after {
+  content: "";
+  position: absolute;
+  top: -2.5px;
+  left: 50%;
+  height: 5px;
+  width: 5px;
+  margin-left: -2.5px;
+  border-radius: 50%;
+  background: var(--glacier);
+  box-shadow: 0 0 14px rgba(174, 188, 255, 0.8);
+}
+.hero-orbit-2 {
+  inset: 15% 13%;
+  border-color: rgba(228, 189, 125, 0.13);
+  opacity: 0.65;
+  animation-direction: reverse;
+  animation-duration: 58s;
+}
+.hero-orbit-2::after {
+  background: var(--gold);
+  box-shadow: 0 0 12px rgba(228, 189, 125, 0.7);
+}
+
+.hero-particles {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+.hero-particle {
+  position: absolute;
+  height: 3px;
+  width: 3px;
+  border-radius: 50%;
+  background: var(--glacier);
+  opacity: 0.4;
+  filter: blur(0.3px);
+  animation: particleFloat var(--dur, 10s) ease-in-out var(--delay, 0s) infinite;
+}
+.hero-particle:nth-child(3n) {
+  background: var(--gold);
+}
+.hero-particle:nth-child(3n + 1) {
+  background: var(--accent);
+}
+
+.flow-line {
+  position: relative;
+  background: linear-gradient(180deg, var(--border-strong), var(--border) 78%, transparent);
+  overflow: visible;
+}
+.flow-line::after {
+  content: "";
+  position: absolute;
+  left: -2px;
+  top: -14px;
+  height: 14px;
+  width: 5px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, transparent, var(--accent), transparent);
+  filter: drop-shadow(0 0 6px var(--accent));
+  opacity: 0.8;
+  animation: flowDot 3.8s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+  animation-delay: var(--flow-delay, 0s);
+}
+
+.nav-underline {
+  position: relative;
+}
+.nav-underline::after {
+  content: "";
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 5px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--glacier), transparent);
+  opacity: 0.8;
+  transform: scaleX(0);
+  transform-origin: 50% 50%;
+  transition: transform 260ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.nav-underline:hover::after,
+.nav-underline:focus-visible::after {
+  transform: scaleX(1);
+}
+
+.btn-sheen {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+.btn-sheen::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(105deg, transparent 32%, rgba(255, 255, 255, 0.3) 46%, transparent 60%);
+  transform: translateX(-130%);
+  transition: transform 700ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.btn-sheen:hover::after {
+  transform: translateX(130%);
+}
+
+.stat-cell {
+  position: relative;
+  transition: background-color 240ms ease;
+}
+.stat-cell::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  opacity: 0;
+  transition: opacity 240ms ease;
+}
+.stat-cell:hover::before {
+  opacity: 0.55;
+}
+.stat-cell:hover {
+  background-color: rgba(255, 255, 255, 0.03);
+}
+
+.tech-cell svg,
+.tech-cell .tech-glyph {
+  transition: transform 260ms cubic-bezier(0.16, 1, 0.3, 1), color 200ms ease;
+}
+.tech-cell:hover svg,
+.tech-cell:hover .tech-glyph {
+  transform: translateY(-2px) scale(1.12);
+}
+
+.spark-draw {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: sparkDraw 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.chart-frame {
+  position: relative;
+}
+.chart-frame::after {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(174, 188, 255, 0.6), transparent);
+  opacity: 0.5;
+  animation: frameScan 7s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.cta-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(46px);
+  opacity: 0.4;
+  pointer-events: none;
+  animation: orbFloat 16s ease-in-out infinite;
+}
+.cta-sheen {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(105deg, transparent 40%, rgba(219, 229, 247, 0.07) 50%, transparent 60%);
+  transform: translateX(-30%);
+  animation: sheen 12s cubic-bezier(0.45, 0, 0.25, 1) infinite;
+}
+
+.login-img-drift {
+  animation: loginDrift 24s ease-in-out infinite alternate;
+}
+
+@keyframes heroEnter {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 18px, 0);
+    filter: blur(5px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+}
+
+@keyframes orbitSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes particleFloat {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+    opacity: 0.1;
+  }
+  50% {
+    transform: translate3d(var(--dx, 6px), var(--dy, -16px), 0);
+    opacity: 0.55;
+  }
+}
+
+@keyframes flowDot {
+  0% {
+    top: -14px;
+    opacity: 0;
+  }
+  12% {
+    opacity: 0.9;
+  }
+  85% {
+    opacity: 0.9;
+  }
+  100% {
+    top: calc(100% + 2px);
+    opacity: 0;
+  }
+}
+
+@keyframes frameScan {
+  0%,
+  100% {
+    transform: translateX(-42%);
+    opacity: 0;
+  }
+  50% {
+    transform: translateX(42%);
+    opacity: 0.6;
+  }
+}
+
+@keyframes orbFloat {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(2%, -4%, 0) scale(1.08);
+  }
+}
+
+@keyframes loginDrift {
+  from {
+    transform: scale(1.02) translate3d(0, 0, 0);
+  }
+  to {
+    transform: scale(1.07) translate3d(-1.6%, -1.2%, 0);
+  }
+}
+
+@keyframes sparkDraw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tilt-card-inner,
+  .hero-tilt {
+    transform: none !important;
+  }
+  .tilt-glare {
+    display: none;
+  }
+  .hero-particle,
+  .hero-orbit,
+  .flow-line::after,
+  .cta-orb,
+  .cta-sheen,
+  .login-img-drift,
+  .chart-frame::after {
+    animation: none !important;
+  }
+  .btn-sheen::after {
+    display: none;
+  }
+  .spark-draw {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+}

@@ -16,6 +16,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { BrandMark, Wordmark } from "@/components/brand";
+import { ParticleField } from "@/components/marketing/tilt";
 import { useSession } from "@/components/providers";
 import { initials } from "@/lib/session";
 import { cn } from "@/components/ui/cn";
@@ -125,7 +126,7 @@ export function LoginView({ initialMode = "signin" }: { initialMode?: Mode }) {
             fill
             priority
             sizes="(min-width: 1560px) 800px, 52vw"
-            className="object-cover object-[66%_50%] opacity-[0.92]"
+            className="login-img-drift object-cover object-[66%_50%] opacity-[0.92]"
           />
           <div
             className="absolute inset-0 bg-[linear-gradient(90deg,rgba(5,7,12,0.95)_0%,rgba(5,7,12,0.62)_46%,rgba(5,7,12,0.16)_100%)]"
@@ -136,6 +137,7 @@ export function LoginView({ initialMode = "signin" }: { initialMode?: Mode }) {
             aria-hidden="true"
           />
           <div className="pointer-events-none absolute inset-x-0 top-0 h-[420px] grid-lines opacity-60" aria-hidden="true" />
+          <ParticleField count={7} />
 
           <div className="relative z-10 flex h-full flex-col p-10 xl:p-14">
             <Link href="/" className="flex w-fit items-center gap-2.5" aria-label="StockSense AI home">
@@ -198,6 +200,7 @@ export function LoginView({ initialMode = "signin" }: { initialMode?: Mode }) {
               className="absolute inset-0 bg-[linear-gradient(90deg,rgba(5,7,12,0.94),rgba(5,7,12,0.35))]"
               aria-hidden="true"
             />
+            <span className="cta-sheen" aria-hidden="true" />
             <div className="relative z-10 flex h-full items-center justify-between px-5">
               <Link href="/" className="flex items-center gap-2.5" aria-label="StockSense AI home">
                 <BrandMark className="h-8 w-8 rounded-lg" />
@@ -245,7 +248,7 @@ export function LoginView({ initialMode = "signin" }: { initialMode?: Mode }) {
                   <div className="mt-6 grid gap-2">
                     <Link
                       href="/dashboard"
-                      className="inline-flex h-11 items-center justify-center gap-2 rounded-full bg-accent text-[13px] font-semibold text-accent-ink transition-all hover:brightness-110"
+                      className="btn-sheen inline-flex h-11 items-center justify-center gap-2 rounded-full bg-accent text-[13px] font-semibold text-accent-ink transition-all hover:brightness-110"
                     >
                       Continue to workspace
                       <ArrowRight size={14} />
@@ -366,7 +369,7 @@ export function LoginView({ initialMode = "signin" }: { initialMode?: Mode }) {
 
                     <button
                       type="submit"
-                      className="group inline-flex h-11 w-full items-center justify-center gap-2 rounded-full bg-accent text-[13px] font-semibold text-accent-ink shadow-[0_14px_34px_-18px_var(--accent)] transition-all hover:brightness-110"
+                      className="btn-sheen group inline-flex h-11 w-full items-center justify-center gap-2 rounded-full bg-accent text-[13px] font-semibold text-accent-ink shadow-[0_14px_34px_-18px_var(--accent)] transition-all hover:brightness-110"
                     >
                       {mode === "signin" ? "Sign in" : "Create demo account"}
                       <ArrowRight size={14} className="transition-transform group-hover:translate-x-0.5" />

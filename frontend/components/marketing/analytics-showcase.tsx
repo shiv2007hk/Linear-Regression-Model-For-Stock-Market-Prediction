@@ -179,7 +179,7 @@ export function AnalyticsShowcase() {
           ) : null}
         </div>
 
-        <div className="mt-3 overflow-hidden rounded-3xl border border-border bg-[linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0.006))] shadow-[0_40px_100px_-60px_rgba(0,0,0,1)]">
+        <div className="chart-frame mt-3 overflow-hidden rounded-3xl border border-border bg-[linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0.006))] shadow-[0_40px_100px_-60px_rgba(0,0,0,1)]">
           <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/70 px-4 py-3 sm:px-5">
             <div className="flex items-center gap-2.5">
               <span className="h-1.5 w-1.5 rounded-full bg-accent" aria-hidden="true" />
@@ -232,8 +232,12 @@ export function AnalyticsShowcase() {
           ) : (
             <>
               <div className="grid grid-cols-2 gap-px border-b border-border/70 bg-border/50 md:grid-cols-4">
-                {metrics.map((metric) => (
-                  <div key={metric.label} className="bg-[#070b12]/80 px-4 py-3">
+                {metrics.map((metric, index) => (
+                  <div
+                    key={`${ticker}-${metric.label}`}
+                    className="animate-fade-up bg-[#070b12]/80 px-4 py-3"
+                    style={{ animationDelay: `${index * 45}ms` }}
+                  >
                     <p className="font-mono text-[8.5px] uppercase tracking-[0.12em] text-[var(--faint)]">{metric.label}</p>
                     <p className="tnum mt-1 font-mono text-[14px] font-medium text-ink">{metric.value}</p>
                   </div>

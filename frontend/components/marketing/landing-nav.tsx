@@ -2,9 +2,9 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { ArrowUpRight, LogIn, Menu, X } from "lucide-react";
+import { ArrowUpRight, LogIn, LogOut, Menu, X } from "lucide-react";
 import { BrandMark, Wordmark } from "@/components/brand";
-import { useSession } from "@/components/providers";
+import { useSession, useToast } from "@/components/providers";
 import { initials } from "@/lib/session";
 import { cn } from "@/components/ui/cn";
 
@@ -19,7 +19,18 @@ const LINKS = [
 
 export function LandingNav() {
   const [open, setOpen] = useState(false);
-  const { session, name, ready } = useSession();
+  const { session, name, ready, signOut } = useSession();
+  const { pushToast } = useToast();
+
+  const handleSignOut = () => {
+    signOut();
+    setOpen(false);
+    pushToast({
+      title: "Signed out",
+      description: "The demo profile was cleared from this browser.",
+      tone: "info",
+    });
+  };
 
   useEffect(() => {
     if (!open) return;
@@ -49,7 +60,7 @@ export function LandingNav() {
             <a
               key={link.href}
               href={link.href}
-              className="relative rounded-full px-3 py-2 text-[12.5px] font-medium text-muted transition-colors hover:text-ink"
+              className="nav-underline relative rounded-full px-3 py-2 text-[12.5px] font-medium text-muted transition-colors hover:text-ink"
             >
               {link.label}
             </a>
@@ -58,15 +69,27 @@ export function LandingNav() {
 
         <div className="ml-auto flex items-center gap-2 lg:ml-4">
           {signedIn ? (
-            <Link
-              href="/dashboard"
-              className="hidden items-center gap-2 rounded-full border border-border bg-white/[0.03] py-1 pl-1 pr-3 transition-colors hover:border-border-strong sm:flex"
-            >
-              <span className="flex h-7 w-7 items-center justify-center rounded-full bg-accent/12 font-mono text-[10px] font-semibold text-accent">
-                {initials(name ?? "")}
-              </span>
-              <span className="max-w-[110px] truncate text-[12px] font-medium text-ink">{name}</span>
-            </Link>
+            <>
+              <Link
+                href="/dashboard"
+                className="hidden items-center gap-2 rounded-full border border-border bg-white/[0.03] py-1 pl-1 pr-3 transition-colors hover:border-border-strong sm:flex"
+              >
+                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-accent/12 font-mono text-[10px] font-semibold text-accent">
+                  {initials(name ?? "")}
+                </span>
+                <span className="max-w-[110px] truncate text-[12px] font-medium text-ink">{name}</span>
+              </Link>
+              <button
+                type="button"
+                onClick={handleSignOut}
+                aria-label="Sign out"
+                title="Sign out"
+                className="hidden h-9 items-center gap-1.5 rounded-full border border-border bg-white/[0.02] px-3 text-[12px] font-medium text-[var(--muted)] transition-colors hover:border-negative/40 hover:text-negative sm:inline-flex"
+              >
+                <LogOut size={13} />
+                Sign out
+              </button>
+            </>
           ) : (
             <Link
               href="/login"
@@ -78,7 +101,7 @@ export function LandingNav() {
           )}
           <Link
             href={signedIn ? "/dashboard" : "/login?mode=signup"}
-            className="group inline-flex h-9 items-center gap-1.5 rounded-full bg-accent px-4 text-[12.5px] font-semibold text-accent-ink shadow-[0_10px_28px_-14px_var(--accent)] transition-all hover:brightness-110"
+            className="btn-sheen group inline-flex h-9 items-center gap-1.5 rounded-full bg-accent px-4 text-[12.5px] font-semibold text-accent-ink shadow-[0_10px_28px_-14px_var(--accent)] transition-all hover:brightness-110"
           >
             {signedIn ? "Open workspace" : "Get started"}
             <ArrowUpRight size={13} className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
@@ -113,22 +136,53 @@ export function LandingNav() {
               <span className="font-mono text-[10px] text-faint">{String(index + 1).padStart(2, "0")}</span>
             </a>
           ))}
-          <div className="mt-2 grid grid-cols-2 gap-2 border-t border-border pt-3">
-            <Link
-              href="/login"
-              onClick={() => setOpen(false)}
-              className="inline-flex h-10 items-center justify-center rounded-full border border-border text-[13px] font-medium text-ink"
-            >
-              Sign in
-            </Link>
-            <Link
-              href="/dashboard"
-              onClick={() => setOpen(false)}
-              className="inline-flex h-10 items-center justify-center rounded-full bg-accent text-[13px] font-semibold text-accent-ink"
-            >
-              Open app
-            </Link>
-          </div>
+          {signedIn ? (
+            <div className="mt-2 border-t border-border pt-3">
+              <div className="mb-2 flex items-center gap-2.5 rounded-xl bg-white/[0.03] px-2.5 py-2">
+                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-accent/12 font-mono text-[10px] font-semibold text-accent">
+                  {initials(name ?? "")}
+                </span>
+                <div className="min-w-0">
+                  <p className="truncate text-[12.5px] font-medium text-ink">{name}</p>
+                  <p className="text-[9.5px] text-faint">Demo session · local to this browser</p>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <Link
+                  href="/dashboard"
+                  onClick={() => setOpen(false)}
+                  className="inline-flex h-10 items-center justify-center rounded-full bg-accent text-[13px] font-semibold text-accent-ink"
+                >
+                  Open workspace
+                </Link>
+                <button
+                  type="button"
+                  onClick={handleSignOut}
+                  className="inline-flex h-10 items-center justify-center gap-1.5 rounded-full border border-border text-[13px] font-medium text-muted transition-colors hover:border-negative/40 hover:text-negative"
+                >
+                  <LogOut size={13} />
+                  Sign out
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="mt-2 grid grid-cols-2 gap-2 border-t border-border pt-3">
+              <Link
+                href="/login"
+                onClick={() => setOpen(false)}
+                className="inline-flex h-10 items-center justify-center rounded-full border border-border text-[13px] font-medium text-ink"
+              >
+                Sign in
+              </Link>
+              <Link
+                href="/login?mode=signup"
+                onClick={() => setOpen(false)}
+                className="inline-flex h-10 items-center justify-center rounded-full bg-accent text-[13px] font-semibold text-accent-ink"
+              >
+                Get started
+              </Link>
+            </div>
+          )}
         </nav>
       </div>
     </header>

@@ -62,14 +62,17 @@ export function TechStack() {
 
         <ul className="grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-border bg-border/50 sm:grid-cols-3 lg:grid-cols-4">
           {TECH.map((tech) => (
-            <li key={tech.name} className="group flex flex-col gap-3 bg-[#060a11] px-4 py-4 transition-colors hover:bg-[#080d16]">
+            <li
+              key={tech.name}
+              className="tech-cell group flex flex-col gap-3 bg-[#060a11] px-4 py-4 transition-colors hover:bg-[#080d16]"
+            >
               <span className="flex h-8 w-8 items-center justify-center text-[var(--chrome)] opacity-80 transition-colors group-hover:text-accent group-hover:opacity-100">
                 {tech.icon ? (
                   <svg viewBox="0 0 24 24" width="19" height="19" role="img" aria-label={tech.icon.title} fill="currentColor">
                     <path d={tech.icon.path} />
                   </svg>
                 ) : (
-                  <span className="font-mono text-[12px] font-bold tracking-tight">{tech.glyph}</span>
+                  <span className="tech-glyph font-mono text-[12px] font-bold tracking-tight">{tech.glyph}</span>
                 )}
               </span>
               <span>

@@ -1,8 +1,10 @@
 "use client";
 
 import Link from "next/link";
+import type { CSSProperties } from "react";
 import { ArrowUpRight } from "lucide-react";
 import { Reveal } from "@/components/marketing/motion";
+import { TiltCard } from "@/components/marketing/tilt";
 
 const STEPS = [
   {
@@ -50,35 +52,39 @@ export function ModelFlow() {
             visible from start to finish.
           </p>
 
-          <div className="mt-7 overflow-hidden rounded-2xl border border-border bg-[linear-gradient(180deg,rgba(255,255,255,0.035),rgba(255,255,255,0.008))]">
-            <div className="flex items-center justify-between border-b border-border/70 px-4 py-2.5">
-              <span className="font-mono text-[9px] uppercase tracking-[0.16em] text-[var(--faint)]">Regression equation</span>
-              <span className="h-1.5 w-1.5 rounded-full bg-[var(--gold)]" aria-hidden="true" />
+          <TiltCard className="mt-7 rounded-2xl" max={4}>
+            <div className="overflow-hidden rounded-2xl border border-border bg-[linear-gradient(180deg,rgba(255,255,255,0.035),rgba(255,255,255,0.008))]">
+              <div className="flex items-center justify-between border-b border-border/70 px-4 py-2.5">
+                <span className="font-mono text-[9px] uppercase tracking-[0.16em] text-[var(--faint)]">
+                  Regression equation
+                </span>
+                <span className="h-1.5 w-1.5 rounded-full bg-[var(--gold)]" aria-hidden="true" />
+              </div>
+              <div className="px-4 py-5">
+                <p className="font-mono text-[clamp(1.6rem,3vw,2.1rem)] tracking-[-0.02em] text-[var(--gold)]">
+                  Y = b<sub>0</sub> + b<sub>1</sub>X
+                </p>
+                <dl className="mt-4 grid gap-2 text-[11.5px]">
+                  <div className="flex items-baseline justify-between gap-4 border-t border-border/60 pt-2">
+                    <dt className="font-mono text-[var(--glacier)]">X</dt>
+                    <dd className="text-right text-[var(--muted)]">Previous adjusted closing price</dd>
+                  </div>
+                  <div className="flex items-baseline justify-between gap-4 border-t border-border/60 pt-2">
+                    <dt className="font-mono text-[var(--gold)]">Y</dt>
+                    <dd className="text-right text-[var(--muted)]">Current adjusted closing price</dd>
+                  </div>
+                  <div className="flex items-baseline justify-between gap-4 border-t border-border/60 pt-2">
+                    <dt className="font-mono text-[var(--faint)]">b0, b1</dt>
+                    <dd className="text-right text-[var(--muted)]">Intercept and slope from the training window</dd>
+                  </div>
+                </dl>
+              </div>
+              <div className="border-t border-border/70 px-4 py-2.5 text-[10px] leading-relaxed text-[var(--faint)]">
+                The holdout fit and the operational refit are reported separately, so evaluation skill is never confused
+                with the coefficients used for the live forecast.
+              </div>
             </div>
-            <div className="px-4 py-5">
-              <p className="font-mono text-[clamp(1.6rem,3vw,2.1rem)] tracking-[-0.02em] text-[var(--gold)]">
-                Y = b<sub>0</sub> + b<sub>1</sub>X
-              </p>
-              <dl className="mt-4 grid gap-2 text-[11.5px]">
-                <div className="flex items-baseline justify-between gap-4 border-t border-border/60 pt-2">
-                  <dt className="font-mono text-[var(--glacier)]">X</dt>
-                  <dd className="text-right text-[var(--muted)]">Previous adjusted closing price</dd>
-                </div>
-                <div className="flex items-baseline justify-between gap-4 border-t border-border/60 pt-2">
-                  <dt className="font-mono text-[var(--gold)]">Y</dt>
-                  <dd className="text-right text-[var(--muted)]">Current adjusted closing price</dd>
-                </div>
-                <div className="flex items-baseline justify-between gap-4 border-t border-border/60 pt-2">
-                  <dt className="font-mono text-[var(--faint)]">b0, b1</dt>
-                  <dd className="text-right text-[var(--muted)]">Intercept and slope from the training window</dd>
-                </div>
-              </dl>
-            </div>
-            <div className="border-t border-border/70 px-4 py-2.5 text-[10px] leading-relaxed text-[var(--faint)]">
-              The holdout fit and the operational refit are reported separately, so evaluation skill is never confused with
-              the coefficients used for the live forecast.
-            </div>
-          </div>
+          </TiltCard>
 
           <Link
             href="/methodology"
@@ -97,7 +103,11 @@ export function ModelFlow() {
                   {String(index + 1).padStart(2, "0")}
                 </span>
                 {index < STEPS.length - 1 ? (
-                  <span className="mt-1 w-px flex-1 bg-gradient-to-b from-border-strong to-border/30" aria-hidden="true" />
+                  <span
+                    className="flow-line mt-1 w-px flex-1"
+                    style={{ "--flow-delay": `${index * 0.62}s` } as CSSProperties}
+                    aria-hidden="true"
+                  />
                 ) : null}
               </div>
               <div className="border-b border-border/50 pb-6 last:border-0 last:pb-0">
