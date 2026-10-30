@@ -1,0 +1,30 @@
+# Python / backend
+backend/.venv/
+__pycache__/
+*.py[cod]
+backend/data/
+*.db
+*.db-shm
+*.db-wal
+backend/tests/_test_stocksense.db
+backend/server.log
+backend/.env
+
+# Node / frontend
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/.env.local
+frontend/*.tsbuildinfo
+npm-debug.log*
+
+# Local verification artifacts
+.shots/
+.pytest_cache/
+*.log
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

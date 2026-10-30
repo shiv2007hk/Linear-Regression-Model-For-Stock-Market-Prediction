@@ -1,0 +1,10 @@
+.venv
+__pycache__
+*.pyc
+data/
+*.db
+*.db-shm
+*.db-wal
+tests/_test_stocksense.db
+.env
+server.log
