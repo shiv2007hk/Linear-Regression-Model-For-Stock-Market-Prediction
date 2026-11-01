@@ -11,6 +11,7 @@ import { cn } from "@/components/ui/cn";
 const LINKS = [
   { href: "#top", label: "Home" },
   { href: "#features", label: "Features" },
+  { href: "#modules", label: "Modules" },
   { href: "#analytics", label: "Analytics" },
   { href: "#how-it-works", label: "How It Works" },
   { href: "#technology", label: "Technology" },

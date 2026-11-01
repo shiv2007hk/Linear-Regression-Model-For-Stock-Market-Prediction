@@ -10,10 +10,11 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from api import alerts, analytics, market_data, model, predictions, watchlist
+from api import alerts, analytics, chat, market_data, model, predictions, watchlist
 from config import get_settings
 from database.session import init_db
 from ml.data_loader import MarketDataError
+from services.deepseek import ChatError
 from services.runtime_state import runtime_state
 from utils import iso_utc
 
@@ -52,6 +53,16 @@ app.add_middleware(
 async def market_data_error_handler(_: Request, exc: MarketDataError) -> JSONResponse:
     if exc.code == "upstream_error":
         runtime_state.record_error(exc.ticker or "unknown", exc.message)
+    return JSONResponse(
+        status_code=exc.status,
+        content={"error": {"code": exc.code, "message": exc.message}},
+    )
+
+
+@app.exception_handler(ChatError)
+async def chat_error_handler(_: Request, exc: ChatError) -> JSONResponse:
+    # Code only: request bodies and upstream detail never reach the log.
+    logger.warning("Copilot error: %s", exc.code)
     return JSONResponse(
         status_code=exc.status,
         content={"error": {"code": exc.code, "message": exc.message}},
@@ -106,6 +117,7 @@ app.include_router(model.router)
 app.include_router(watchlist.router)
 app.include_router(predictions.router)
 app.include_router(alerts.router)
+app.include_router(chat.router)
 
 
 @app.get("/api/health", tags=["system"])

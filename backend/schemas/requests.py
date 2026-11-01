@@ -69,3 +69,47 @@ class AlertCreate(BaseModel):
 
 class AlertToggle(BaseModel):
     enabled: bool
+
+
+class ChatContext(BaseModel):
+    """Page context from the UI. Treated as untrusted data, never as instructions."""
+
+    page: str | None = Field(default=None, max_length=64)
+    section: str | None = Field(default=None, max_length=64)
+    ticker: str | None = Field(default=None, max_length=24)
+    period: str | None = Field(default=None, max_length=16)
+    horizon: int | None = Field(default=None, ge=1, le=5)
+
+    @field_validator("ticker")
+    @classmethod
+    def check_ticker(cls, v: str | None) -> str | None:
+        try:
+            return normalize_ticker(v) if v else None
+        except ValueError:
+            return None
+
+
+class ChatRequest(BaseModel):
+    message: str = Field(min_length=1, max_length=4000)
+    conversation_id: int | None = Field(default=None, ge=1)
+    context: ChatContext | None = None
+
+    @field_validator("message")
+    @classmethod
+    def check_message(cls, v: str) -> str:
+        cleaned = (v or "").strip()
+        if not cleaned:
+            raise ValueError("Message must not be empty.")
+        return cleaned
+
+
+class ChatConversationCreate(BaseModel):
+    title: str = Field(default="New chat", min_length=1, max_length=120)
+
+    @field_validator("title")
+    @classmethod
+    def check_title(cls, v: str) -> str:
+        cleaned = " ".join((v or "").split()).strip()
+        if not cleaned:
+            raise ValueError("Conversation title must not be empty.")
+        return cleaned

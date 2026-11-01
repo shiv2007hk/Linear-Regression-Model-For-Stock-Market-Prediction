@@ -134,6 +134,7 @@ def patch_loader(monkeypatch):
             "services.predictions": "load_market_data",
             "services.analytics": "load_market_data",
             "services.dashboard": "load_market_data",
+            "services.chat_tools": "load_market_data",
         }
         for module_name, attribute in targets.items():
             try:

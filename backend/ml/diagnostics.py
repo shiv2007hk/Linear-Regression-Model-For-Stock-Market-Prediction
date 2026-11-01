@@ -63,6 +63,7 @@ def residual_diagnostics(model_result: dict[str, Any]) -> dict[str, Any]:
     except Exception:
         acf_values = []
     band = 1.96 / np.sqrt(n)
+    sigma_band = 1.96 * std
     significant_lags = [i for i, v in enumerate(acf_values) if i > 0 and abs(v) > band]
 
     qq = stats.probplot(residuals, dist="norm", fit=True)
@@ -147,6 +148,7 @@ def residual_diagnostics(model_result: dict[str, Any]) -> dict[str, Any]:
             "breusch_pagan_stat": safe_round(float(bp_stat), 4) if bp_stat is not None else None,
             "breusch_pagan_p": safe_round(float(bp_p), 6) if bp_p is not None else None,
             "acf_band": safe_round(float(band), 4),
+            "sigma_band": safe_round(float(sigma_band), 4),
             "significant_acf_lags": significant_lags,
             "outlier_threshold": safe_round(float(threshold), 4),
         },
@@ -156,7 +158,7 @@ def residual_diagnostics(model_result: dict[str, Any]) -> dict[str, Any]:
                 for i in range(n)
             ],
             "over_time": [
-                {"date": dates[i], "residual": safe_round(residuals[i], 4), "band": safe_round(float(band * std), 4)}
+                {"date": dates[i], "residual": safe_round(residuals[i], 4), "band": safe_round(float(sigma_band), 4)}
                 for i in range(n)
             ],
             "histogram": _histogram(residuals.tolist()),

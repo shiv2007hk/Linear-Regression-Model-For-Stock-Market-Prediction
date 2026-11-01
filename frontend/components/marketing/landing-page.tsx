@@ -7,6 +7,7 @@ import { TickerTape } from "@/components/marketing/ticker-tape";
 import { StatBand } from "@/components/marketing/stat-band";
 import { MarketBoard } from "@/components/marketing/market-board";
 import { Features } from "@/components/marketing/features";
+import { ModuleOrbit } from "@/components/marketing/module-orbit";
 import { ModelFlow } from "@/components/marketing/model-flow";
 import { AnalyticsShowcase } from "@/components/marketing/analytics-showcase";
 import { TechStack } from "@/components/marketing/tech-stack";
@@ -24,6 +25,7 @@ export function LandingPage() {
         <StatBand />
         <MarketBoard />
         <Features />
+        <ModuleOrbit />
         <ModelFlow />
         <AnalyticsShowcase />
         <TechStack />

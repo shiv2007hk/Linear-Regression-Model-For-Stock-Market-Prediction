@@ -143,7 +143,7 @@ function DiagnosticsContent({ payload }: { payload: DiagnosticsPayload }) {
           eyebrow="Independence"
           title="Residuals over time"
           description="Bands mark ±1.96 residual standard deviations. Runs above or below zero suggest the model misses persistent structure."
-          footer={<ChartFootnote>Dated in chronological holdout order. The band is a fixed ±1.96σ reference, not a prediction interval.</ChartFootnote>}
+          footer={<ChartFootnote>Dated in chronological holdout order. The band sits at ±1.96σ = ±{stats.sigma_band.toFixed(2)} (σ = {stats.std.toFixed(2)}), a fixed reference and not a prediction interval.</ChartFootnote>}
         >
           <PlotlyChart
             ariaLabel="Residuals over time with 95 percent band"

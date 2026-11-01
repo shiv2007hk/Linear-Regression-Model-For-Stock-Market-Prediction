@@ -10,6 +10,7 @@ from sqlalchemy import (
     Index,
     Integer,
     String,
+    Text,
     UniqueConstraint,
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -127,3 +128,43 @@ class AlertEvent(Base):
     message: Mapped[str] = mapped_column(String(512), nullable=False)
     dedupe_key: Mapped[str] = mapped_column(String(128), nullable=False)
     created_ts: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+
+
+class ChatConversation(Base):
+    __tablename__ = "chat_conversations"
+    __table_args__ = (Index("ix_chat_conversations_updated", "updated_ts"),)
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    title: Mapped[str] = mapped_column(String(120), nullable=False, default="New chat")
+    model: Mapped[str | None] = mapped_column(String(64))
+    page: Mapped[str | None] = mapped_column(String(64))
+    ticker: Mapped[str | None] = mapped_column(String(24))
+    created_ts: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+    updated_ts: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+
+    messages: Mapped[list["ChatMessage"]] = relationship(
+        back_populates="conversation", cascade="all, delete-orphan", passive_deletes=True
+    )
+
+
+class ChatMessage(Base):
+    __tablename__ = "chat_messages"
+    __table_args__ = (Index("ix_chat_messages_conversation_ts", "conversation_id", "created_ts"),)
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    conversation_id: Mapped[int] = mapped_column(
+        ForeignKey("chat_conversations.id", ondelete="CASCADE"), nullable=False
+    )
+    # user | assistant | tool. Only user and assistant rows are replayed upstream.
+    role: Mapped[str] = mapped_column(String(16), nullable=False)
+    content: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    tool_name: Mapped[str | None] = mapped_column(String(48))
+    tool_calls: Mapped[str | None] = mapped_column(Text)
+    model: Mapped[str | None] = mapped_column(String(64))
+    # Set when a turn failed (chat_not_configured, chat_auth, tool_not_allowed, ...).
+    error_code: Mapped[str | None] = mapped_column(String(48))
+    prompt_tokens: Mapped[int | None] = mapped_column(Integer)
+    completion_tokens: Mapped[int | None] = mapped_column(Integer)
+    created_ts: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+
+    conversation: Mapped[ChatConversation] = relationship(back_populates="messages")

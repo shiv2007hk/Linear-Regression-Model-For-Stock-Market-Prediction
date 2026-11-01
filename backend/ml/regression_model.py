@@ -24,8 +24,9 @@ def _fit(x: np.ndarray, y: np.ndarray) -> LinearRegression:
 
 
 def _equation(intercept: float, slope: float, symbol: str = "Y") -> str:
-    sign = "+" if intercept >= 0 else "−"
-    return f"Y = {abs(intercept):.4f} {sign} {abs(slope):.4f} · X"
+    b0 = f"−{abs(intercept):.4f}" if intercept < 0 else f"{intercept:.4f}"
+    operator = "−" if slope < 0 else "+"
+    return f"{symbol} = {b0} {operator} {abs(slope):.4f} · X"
 
 
 def train_and_evaluate(
@@ -113,6 +114,11 @@ def train_and_evaluate(
         max_points=500,
     )
 
+    b0 = safe_round(float(model.intercept_), 6)
+    b1 = safe_round(float(model.coef_[0]), 6)
+    op_b0 = safe_round(float(operational.intercept_), 6)
+    op_b1 = safe_round(float(operational.coef_[0]), 6)
+
     x_min = float(np.nanmin(data["x"].to_numpy(dtype=float)))
     x_max = float(np.nanmax(data["x"].to_numpy(dtype=float)))
     line_points = 40
@@ -126,8 +132,8 @@ def train_and_evaluate(
     insights = build_model_insights(
         ticker=ticker,
         model_type=model_type,
-        intercept=float(model.intercept_),
-        slope=float(model.coef_[0]),
+        intercept=b0,
+        slope=b1,
         model_metrics=model_metrics,
         naive_metrics=naive_metrics,
         train_metrics=train_metrics,
@@ -145,15 +151,15 @@ def train_and_evaluate(
         "trained_at": datetime.now(timezone.utc).isoformat(),
         "split_ratio": split_ratio,
         "coefficients": {
-            "intercept": safe_round(float(model.intercept_), 6),
-            "slope": safe_round(float(model.coef_[0]), 6),
-            "equation": _equation(float(model.intercept_), float(model.coef_[0])),
+            "intercept": b0,
+            "slope": b1,
+            "equation": _equation(b0, b1),
             "training_r2": safe_round(float(model.score(X_train.reshape(-1, 1), y_train)), 4),
         },
         "operational_coefficients": {
-            "intercept": safe_round(float(operational.intercept_), 6),
-            "slope": safe_round(float(operational.coef_[0]), 6),
-            "equation": _equation(float(operational.intercept_), float(operational.coef_[0])),
+            "intercept": op_b0,
+            "slope": op_b1,
+            "equation": _equation(op_b0, op_b1),
             "n_observations": int(n),
             "fitted_through": data.loc[n - 1, "date"].strftime("%Y-%m-%d"),
         },

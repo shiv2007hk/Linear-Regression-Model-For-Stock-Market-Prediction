@@ -51,3 +51,17 @@ def test_breusch_pagan_is_reported_when_statsmodels_is_available(noisy_frame):
 
     assert stats["breusch_pagan_stat"] is not None
     assert 0.0 <= stats["breusch_pagan_p"] <= 1.0
+
+
+def test_residual_chart_band_is_1_96_sigma_not_the_acf_band(noisy_frame):
+    """The UI labels the over-time band ±1.96σ, so the value must actually be 1.96 * std."""
+    model = train_and_evaluate(noisy_frame, "TEST.NS", split_ratio=0.7)
+    diagnostics = residual_diagnostics(model)
+    stats = diagnostics["stats"]
+    n = stats["n"]
+
+    assert stats["sigma_band"] == pytest.approx(1.96 * stats["std"], rel=1e-3)
+    assert stats["acf_band"] == pytest.approx(1.96 / np.sqrt(n), rel=1e-3)
+    assert diagnostics["series"]["over_time"][0]["band"] == pytest.approx(stats["sigma_band"], rel=1e-3)
+    # A 1.96σ band is far wider than the 1.96/sqrt(n) ACF band it was previously confused with.
+    assert stats["sigma_band"] > 5 * stats["acf_band"]

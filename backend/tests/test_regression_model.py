@@ -1,10 +1,51 @@
 from __future__ import annotations
 
 import numpy as np
+import pandas as pd
 import pytest
 
 from ml.preprocessing import build_supervised, chronological_split
-from ml.regression_model import residual_summary, train_and_evaluate, walk_forward
+from ml.regression_model import _equation, residual_summary, train_and_evaluate, walk_forward
+
+
+@pytest.fixture(scope="session")
+def declining_frame() -> pd.DataFrame:
+    """A steadily falling series, so the trend fit has a negative slope."""
+    closes = np.linspace(500.0, 260.0, 200)
+    index = pd.bdate_range(start="2023-01-02", periods=len(closes))
+    index.name = "Date"
+    return pd.DataFrame(
+        {
+            "Open": closes,
+            "High": closes * 1.01,
+            "Low": closes * 0.99,
+            "Close": closes,
+            "Volume": np.full(len(closes), 1_000_000.0),
+        },
+        index=index,
+    )
+
+
+def test_equation_keeps_the_sign_of_each_coefficient():
+    assert _equation(18.3915, 0.9867) == "Y = 18.3915 + 0.9867 · X"
+    assert _equation(-5.0, 0.95) == "Y = −5.0000 + 0.9500 · X"
+    assert _equation(12.0, -0.45) == "Y = 12.0000 − 0.4500 · X"
+    assert _equation(-3.0, -0.8) == "Y = −3.0000 − 0.8000 · X"
+
+
+def test_declining_trend_fit_is_not_rendered_as_rising(declining_frame):
+    result = train_and_evaluate(declining_frame, "TEST.NS", model_type="trend")
+    coefficients = result["coefficients"]
+
+    assert coefficients["slope"] < 0
+    assert f"− {abs(coefficients['slope']):.4f} · X" in coefficients["equation"]
+
+
+def test_equation_agrees_with_the_reported_coefficients(exact_frame):
+    result = train_and_evaluate(exact_frame, "TEST.NS")
+    for block in (result["coefficients"], result["operational_coefficients"]):
+        assert f"{block['intercept']:.4f}" in block["equation"]
+        assert f"{abs(block['slope']):.4f}" in block["equation"]
 
 
 def test_lag_model_recovers_known_coefficients(exact_frame):

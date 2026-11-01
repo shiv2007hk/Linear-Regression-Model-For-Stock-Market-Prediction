@@ -33,6 +33,7 @@ import {
 } from "lucide-react";
 import { NAV_GROUPS } from "@/lib/nav";
 import { cn } from "@/components/ui/cn";
+import { Copilot } from "@/components/copilot";
 import { Badge, Button, IconButton, StatusDot } from "@/components/ui/primitives";
 import { TickerSearch } from "@/components/ticker-search";
 import { BrandMark, Wordmark } from "@/components/brand";
@@ -589,6 +590,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </footer>
         </main>
       </div>
+
+      <Copilot />
     </div>
   );
 }

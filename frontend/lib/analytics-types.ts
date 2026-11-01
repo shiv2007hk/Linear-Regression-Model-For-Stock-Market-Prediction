@@ -346,6 +346,7 @@ export interface DiagnosticsStats {
   breusch_pagan_stat: number;
   breusch_pagan_p: number;
   acf_band: number;
+  sigma_band: number;
   significant_acf_lags: number[];
   outlier_threshold: number;
 }
